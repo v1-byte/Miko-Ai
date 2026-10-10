@@ -53,6 +53,9 @@ Di GitHub: tab **Actions → Latih model → Run workflow** (hasil di-commit ke 
 Setiap push ke branch `main` otomatis menjalankan test paritas, membangun APK, dan memperbarui
 release **[latest](https://github.com/v1-byte/Miko-Ai/releases/tag/latest)**. Jadi perubahan kode atau fitur
 yang sudah dipush ke GitHub akan tersedia otomatis di release latest.
+APK juga memeriksa release latest saat dibuka dan menampilkan tombol unduh ketika ada build baru.
+Android tetap meminta konfirmasi pengguna saat memasang APK; pembaruan diam-diam tidak diizinkan Android
+untuk APK di luar Play Store.
 Untuk rilis versi resmi, gunakan `git tag v1.0.0 && git push --tags` → APK muncul di **Releases**.
 
 ## "Server AI di GitHub" — penjelasan jujur

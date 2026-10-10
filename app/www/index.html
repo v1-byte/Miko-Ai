@@ -16,16 +16,30 @@ button{padding:10px 16px;border:0;border-radius:8px;background:#2f81f7;color:#ff
 </style></head><body>
 <header>Miko AI · khusus coding</header>
 <div id="st">Memuat model…</div>
+<div id="upd" hidden style="padding:8px 16px;background:#3d2e00;color:#ffd666;font-size:13px"></div>
 <div id="log"></div>
 <form id="f"><input id="q" placeholder="Tanya soal kode…" autocomplete="off"><button>Kirim</button></form>
 <script type="module">
 import { loadModel } from "./ai/miko-ai-lm.js";
 import { reply } from "./ai/assistant.js";
 const log = document.getElementById("log"), st = document.getElementById("st");
+const upd = document.getElementById("upd");
 const add = (cls, txt = "") => { const d = document.createElement("div"); d.className = "m " + cls; d.textContent = txt; log.append(d); log.scrollTop = log.scrollHeight; return d; };
+async function checkUpdate() {
+  try {
+    const local = await fetch(`./build.json?${Date.now()}`).then((r) => r.ok ? r.json() : null);
+    if (!local) return;
+    const remote = await fetch("https://api.github.com/repos/v1-byte/Miko-Ai/releases/tags/latest", { headers: { Accept: "application/vnd.github+json" } }).then((r) => r.ok ? r.json() : null);
+    if (!remote || !remote.published_at || remote.body?.includes(`commit \`${local.commit}\``)) return;
+    upd.hidden = false;
+    upd.innerHTML = `Versi baru Miko AI tersedia. <button id="updateBtn" style="padding:4px 8px;margin-left:6px">Unduh & instal</button>`;
+    document.getElementById("updateBtn").onclick = () => { window.open(local.updateUrl, "_blank"); };
+  } catch (_) { /* Update opsional; aplikasi tetap berjalan offline. */ }
+}
 let lm;
 try { lm = await loadModel("./model/"); st.textContent = `Model siap · versi ${lm.version} · ${(lm.cfg.n_layer)} layer`; }
 catch (e) { st.textContent = "Gagal memuat model: " + e.message; }
+checkUpdate();
 f.onsubmit = async (e) => {
   e.preventDefault();
   if (!lm || !q.value.trim()) return;

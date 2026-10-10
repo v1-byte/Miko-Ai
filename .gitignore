@@ -6,4 +6,5 @@ data/processed/
 app/android/
 app/www/ai/
 app/www/model/
+app/www/build.json
 .env
