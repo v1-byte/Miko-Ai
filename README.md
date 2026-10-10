@@ -87,6 +87,10 @@ Jika model kecil menghasilkan teks yang belum terbaca, runtime memakai fallback 
 umum dan menampilkan error dengan jelas. Untuk jawaban model yang lebih baik, tambahkan dataset dan latih
 ulang dengan lebih banyak langkah.
 
+Dataset dari APK dapat disimpan lokal tanpa token GitHub melalui **Simpan lokal**. Konektor GitHub hanya
+diperlukan saat pengguna memilih **Sinkronkan GitHub & latih** untuk mengirim antrean dataset ke repository
+dan menjalankan training cloud. Dengan demikian input dataset tidak bergantung pada konektor.
+
 ## Yang sudah diuji / belum
 - Diuji: tokenizer Python vs JS, inferensi JS vs referensi numpy (bobot acak), pembangun dataset.
 - **Belum dijalankan**: `model/gpt.py`, `train/*.py`, `export_weights.py` (butuh PyTorch), workflow GitHub,
