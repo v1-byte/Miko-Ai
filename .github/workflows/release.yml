@@ -27,6 +27,8 @@ jobs:
         run: |
           npm install
           npx cap add android
+          cd .. && bash scripts/install_auto_update_android.sh
+          cd app
           npx cap sync android
           cd android && chmod +x gradlew && ./gradlew assembleDebug
       - name: Ganti nama APK

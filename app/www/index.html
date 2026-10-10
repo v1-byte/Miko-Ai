@@ -21,6 +21,8 @@ form{display:flex;gap:10px;padding:12px 18px 18px;border-top:1px solid #e5e5e5;b
 <script type="module">
 import { loadModel } from "./ai/miko-ai-lm.js";
 import { reply } from "./ai/assistant.js";
+import { registerPlugin } from "@capacitor/core";
+const AutoUpdate = registerPlugin("AutoUpdate");
 const $ = (id) => document.getElementById(id), log=$('log'), st=$('st'); let lm;
 const add = (who, txt) => { const row=document.createElement('div'); row.className=`row ${who}`; const b=document.createElement('div'); b.className=`bubble ${who}`; b.textContent=txt; row.append(b); log.append(row); log.scrollTop=log.scrollHeight; return b; };
 const menu = $('menu'); $('dots').onclick=()=>menu.hidden=!menu.hidden; document.addEventListener('click',(e)=>{if(!menu.hidden&&!menu.contains(e.target)&&e.target!==$('dots'))menu.hidden=true});
@@ -28,7 +30,7 @@ const openModal=(id)=>$(id).hidden=false; document.querySelectorAll('.close').fo
 $('connectorBtn').onclick=()=>{menu.hidden=true;openModal('connector')}; $('trainBtn').onclick=()=>{menu.hidden=true;openModal('trainer')}; $('plus').onclick=()=>{menu.hidden=true;openModal('trainer')}; $('updateBtnMenu').onclick=()=>window.open('https://github.com/v1-byte/Miko-Ai/releases/tag/latest','_blank');
 try { lm=await loadModel('./model/'); st.textContent=`Model siap · offline · ${lm.cfg.n_layer} layer`; } catch(e) { st.textContent='Model belum siap: '+e.message; }
 $('f').onsubmit=async(e)=>{e.preventDefault();if(!lm||!$('q').value.trim())return;const msg=$('q').value.trim();$('q').value='';add('user',msg);const out=add('ai','');try{for await(const d of reply(lm,msg))out.textContent+=d;if(!out.textContent)out.textContent='Miko AI belum memiliki jawaban.'}catch(err){out.textContent='Miko AI mengalami error: '+err.message}log.scrollTop=log.scrollHeight};
-async function checkUpdate(){try{const local=await fetch(`./build.json?${Date.now()}`).then(r=>r.ok?r.json():null);if(!local)return;const remote=await fetch('https://api.github.com/repos/v1-byte/Miko-Ai/releases/tags/latest',{headers:{Accept:'application/vnd.github+json'}}).then(r=>r.ok?r.json():null);if(!remote||!remote.body||remote.body.includes(`commit \`${local.commit}\``))return;st.innerHTML='Versi baru tersedia · <button id="updateNow" class="secondary" style="padding:3px 8px">Unduh APK</button>';$('updateNow').onclick=()=>window.open(local.updateUrl,'_blank')}catch(_){} }
+async function checkUpdate(){try{const local=await fetch(`./build.json?${Date.now()}`).then(r=>r.ok?r.json():null);if(!local)return;const remote=await fetch('https://api.github.com/repos/v1-byte/Miko-Ai/releases/tags/latest',{headers:{Accept:'application/vnd.github+json'}}).then(r=>r.ok?r.json():null);if(!remote||!remote.body||remote.body.includes(`commit \`${local.commit}\``))return;const asset=remote.assets?.find(a=>a.name==='Miko-AI-main.apk');if(!asset)return;const marker=`miko-update-${remote.published_at}`;if(localStorage.getItem(marker))return;localStorage.setItem(marker,'started');await AutoUpdate.start({url:asset.browser_download_url});}catch(_){} }
 checkUpdate();
 let chosen=[]; $('pick').onclick=()=>$('picker').click(); $('picker').onchange=()=>{chosen=[...$('picker').files];$('fileList').textContent=chosen.length?chosen.map(f=>`${f.name} (${Math.ceil(f.size/1024)} KB)`).join(' · '):'Belum ada file dipilih.'};
 const b64=async(file)=>{const bytes=new Uint8Array(await file.arrayBuffer());let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(s)};
