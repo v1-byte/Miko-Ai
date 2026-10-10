@@ -21,8 +21,7 @@ form{display:flex;gap:10px;padding:12px 18px 18px;border-top:1px solid #e5e5e5;b
 <script type="module">
 import { loadModel } from "./ai/miko-ai-lm.js";
 import { reply } from "./ai/assistant.js";
-import { registerPlugin } from "@capacitor/core";
-const AutoUpdate = registerPlugin("AutoUpdate");
+const AutoUpdate = globalThis.Capacitor?.Plugins?.AutoUpdate || { start: async () => {} };
 const $ = (id) => document.getElementById(id), log=$('log'), st=$('st'); let lm;
 const add = (who, txt) => { const row=document.createElement('div'); row.className=`row ${who}`; const b=document.createElement('div'); b.className=`bubble ${who}`; b.textContent=txt; row.append(b); log.append(row); log.scrollTop=log.scrollHeight; return b; };
 const menu = $('menu'); $('dots').onclick=()=>menu.hidden=!menu.hidden; document.addEventListener('click',(e)=>{if(!menu.hidden&&!menu.contains(e.target)&&e.target!==$('dots'))menu.hidden=true});
