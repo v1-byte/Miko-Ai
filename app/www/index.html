@@ -3,53 +3,38 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Miko AI</title>
 <style>
-:root{color-scheme:dark}
-body{margin:0;font:16px system-ui;background:#0f1419;color:#e6edf3;display:flex;flex-direction:column;height:100dvh}
-header{padding:12px 16px;border-bottom:1px solid #30363d;font-weight:600}
-#log{flex:1;overflow:auto;padding:12px 16px}
-.m{margin:0 0 12px;padding:10px 12px;border-radius:10px;white-space:pre-wrap;word-break:break-word}
-.u{background:#1f6feb33}.a{background:#161b22;font-family:ui-monospace,monospace;font-size:14px}
-form{display:flex;gap:8px;padding:12px 16px;border-top:1px solid #30363d}
-input{flex:1;padding:10px;border-radius:8px;border:1px solid #30363d;background:#161b22;color:inherit;font:inherit}
-button{padding:10px 16px;border:0;border-radius:8px;background:#2f81f7;color:#fff;font:inherit}
-#st{font-size:12px;color:#8b949e;padding:0 16px 6px}
+:root{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#111;background:#f8f8f8}
+*{box-sizing:border-box}body{margin:0;height:100dvh;display:flex;flex-direction:column;background:#fff}
+header{height:88px;display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid #e5e5e5;flex:none}
+.logo{width:48px;height:48px;border:3px solid #111;border-radius:50%;display:grid;place-items:center;font-size:27px;font-weight:800;letter-spacing:-5px;padding-right:5px}.brand{font-size:31px;font-weight:800;letter-spacing:-1.5px}.dots{margin-left:auto;width:48px;height:48px;border:0;background:transparent;font-size:30px;letter-spacing:4px;line-height:20px;cursor:pointer;color:#111}
+#log{flex:1;overflow:auto;padding:26px 22px 14px;background:linear-gradient(#fff,#fafafa)}.row{display:flex;margin:0 0 18px}.row.user{justify-content:flex-end}.bubble{max-width:min(86%,680px);padding:15px 18px;border-radius:22px;white-space:pre-wrap;word-break:break-word;line-height:1.45;font-size:16px}.bubble.ai{background:#ededed;border-bottom-left-radius:6px}.bubble.user{background:#151515;color:#fff;border-bottom-right-radius:6px}.time{font-size:12px;color:#777;margin:5px 18px}.empty{color:#555;font-size:19px;line-height:1.45;margin:20px 0}.empty strong{color:#111}.status{font-size:12px;color:#777;padding:5px 22px;background:#fff}
+form{display:flex;gap:10px;padding:12px 18px 18px;border-top:1px solid #e5e5e5;background:#fff;align-items:center}.composer{flex:1;display:flex;align-items:center;border:1px solid #bbb;border-radius:28px;min-height:52px;padding:0 12px;background:#fff}.composer input{flex:1;border:0;outline:0;background:transparent;padding:10px;font:inherit;font-size:16px;min-width:0}.iconbtn,.send{border:0;cursor:pointer}.iconbtn{width:38px;height:38px;border:2px solid #111;border-radius:50%;background:#fff;font-size:25px;line-height:20px}.send{width:54px;height:54px;border-radius:18px;background:#111;color:#fff;font-size:25px}
+#menu{position:fixed;right:18px;top:72px;width:245px;background:#fff;border:1px solid #ddd;border-radius:16px;box-shadow:0 10px 30px #0002;padding:8px;z-index:5}#menu[hidden],.modal[hidden]{display:none}.menuitem{display:block;width:100%;text-align:left;border:0;background:#fff;padding:13px 14px;border-radius:10px;font:inherit;cursor:pointer}.menuitem:hover{background:#f1f1f1}.menuitem b{display:block}.menuitem small{color:#777}
+.modal{position:fixed;inset:0;background:#0005;z-index:10;display:grid;place-items:center;padding:18px}.card{width:min(100%,560px);max-height:92dvh;overflow:auto;background:#fff;border-radius:20px;padding:22px;box-shadow:0 20px 60px #0004}.card h2{margin:0 0 6px;font-size:24px}.card p{color:#666;margin:6px 0 18px}.field{display:flex;flex-direction:column;gap:6px;margin:12px 0}.field label{font-weight:600;font-size:14px}.field input,.field textarea{font:inherit;border:1px solid #bbb;border-radius:10px;padding:11px}.field textarea{min-height:150px;resize:vertical}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.primary,.secondary{border:0;border-radius:10px;padding:11px 15px;font:inherit;cursor:pointer}.primary{background:#111;color:#fff}.secondary{background:#eee;color:#111}.files{font-size:13px;color:#555;margin-top:8px}.notice{padding:10px 12px;border-radius:10px;background:#f4f4f4;font-size:13px;color:#555;margin-top:10px}.ok{color:#147a36}.err{color:#b42318}
 </style></head><body>
-<header>Miko AI · khusus coding</header>
-<div id="st">Memuat model…</div>
-<div id="upd" hidden style="padding:8px 16px;background:#3d2e00;color:#ffd666;font-size:13px"></div>
-<div id="log"></div>
-<form id="f"><input id="q" placeholder="Tanya soal kode…" autocomplete="off"><button>Kirim</button></form>
+<header><div class="logo">M</div><div class="brand">Miko AI</div><button class="dots" id="dots" aria-label="Menu">•••</button></header>
+<div id="menu" hidden><button class="menuitem" id="connectorBtn"><b>Konektor GitHub</b><small>Sambungkan repo untuk menyimpan data</small></button><button class="menuitem" id="trainBtn"><b>Latih AI / tambah data</b><small>Masukkan kode, ZIP, file, atau teks</small></button><button class="menuitem" id="updateBtnMenu"><b>Periksa pembaruan APK</b><small>Ambil versi terbaru dari GitHub</small></button></div>
+<div id="st" class="status">Memuat Miko AI…</div><div id="log"><div class="empty"><strong>Hai! Saya Miko AI.</strong><br>Bagaimana saya bisa membantu Anda hari ini?</div></div>
+<form id="f"><div class="composer"><button type="button" class="iconbtn" id="plus" aria-label="Tambah data">+</button><input id="q" placeholder="Tanya Miko AI apa saja…" autocomplete="off"><span style="font-size:22px;color:#777">⌕</span></div><button class="send" aria-label="Kirim">➤</button></form>
+<div id="connector" class="modal" hidden><div class="card"><h2>Konektor GitHub</h2><p>Hubungkan repo agar data coding dapat disimpan dan pipeline training dapat dijalankan.</p><div class="field"><label>Repository</label><input id="repo" value="v1-byte/Miko-Ai" placeholder="pemilik/nama-repo"></div><div class="field"><label>Personal Access Token</label><input id="token" type="password" placeholder="ghp_… atau github_pat_…" autocomplete="off"></div><div class="notice">Token hanya digunakan di sesi aplikasi ini untuk GitHub API dan tidak dimasukkan ke model.</div><div id="connMsg"></div><div class="actions"><button class="secondary close" type="button">Batal</button><button class="primary" id="connect" type="button">Tes & simpan sesi</button></div></div></div>
+<div id="trainer" class="modal" hidden><div class="card"><h2>Latih AI / tambah data</h2><p>Tambahkan kode dan contoh tanya-jawab agar Miko AI lebih pintar khusus coding.</p><div class="field"><label>Masukkan data</label><textarea id="dataText" placeholder="Tulis kode atau contoh data di sini…"></textarea></div><div class="actions" style="justify-content:flex-start"><button class="secondary" id="pick" type="button">＋ Pilih file / ZIP</button><input id="picker" type="file" hidden multiple accept=".txt,.md,.js,.mjs,.ts,.py,.html,.css,.json,.sh,.java,.kt,.c,.cpp,.go,.rs,.php,.sql,.zip"></div><div id="fileList" class="files">Belum ada file dipilih.</div><div class="notice">Data akan disimpan ke <b>data/raw/user/</b>. Setelah commit, workflow GitHub akan membangun model dan memperbarui APK latest.</div><div id="trainMsg"></div><div class="actions"><button class="secondary close" type="button">Batal</button><button class="primary" id="saveTrain" type="button">Simpan di GitHub & latih AI</button></div></div></div>
 <script type="module">
 import { loadModel } from "./ai/miko-ai-lm.js";
 import { reply } from "./ai/assistant.js";
-const log = document.getElementById("log"), st = document.getElementById("st");
-const upd = document.getElementById("upd");
-const add = (cls, txt = "") => { const d = document.createElement("div"); d.className = "m " + cls; d.textContent = txt; log.append(d); log.scrollTop = log.scrollHeight; return d; };
-async function checkUpdate() {
-  try {
-    const local = await fetch(`./build.json?${Date.now()}`).then((r) => r.ok ? r.json() : null);
-    if (!local) return;
-    const remote = await fetch("https://api.github.com/repos/v1-byte/Miko-Ai/releases/tags/latest", { headers: { Accept: "application/vnd.github+json" } }).then((r) => r.ok ? r.json() : null);
-    if (!remote || !remote.published_at || remote.body?.includes(`commit \`${local.commit}\``)) return;
-    upd.hidden = false;
-    upd.innerHTML = `Versi baru Miko AI tersedia. <button id="updateBtn" style="padding:4px 8px;margin-left:6px">Unduh & instal</button>`;
-    document.getElementById("updateBtn").onclick = () => { window.open(local.updateUrl, "_blank"); };
-  } catch (_) { /* Update opsional; aplikasi tetap berjalan offline. */ }
-}
-let lm;
-try { lm = await loadModel("./model/"); st.textContent = `Model siap · versi ${lm.version} · ${(lm.cfg.n_layer)} layer`; }
-catch (e) { st.textContent = "Gagal memuat model: " + e.message; }
+const $ = (id) => document.getElementById(id), log=$('log'), st=$('st'); let lm;
+const add = (who, txt) => { const row=document.createElement('div'); row.className=`row ${who}`; const b=document.createElement('div'); b.className=`bubble ${who}`; b.textContent=txt; row.append(b); log.append(row); log.scrollTop=log.scrollHeight; return b; };
+const menu = $('menu'); $('dots').onclick=()=>menu.hidden=!menu.hidden; document.addEventListener('click',(e)=>{if(!menu.hidden&&!menu.contains(e.target)&&e.target!==$('dots'))menu.hidden=true});
+const openModal=(id)=>$(id).hidden=false; document.querySelectorAll('.close').forEach(b=>b.onclick=()=>b.closest('.modal').hidden=true);
+$('connectorBtn').onclick=()=>{menu.hidden=true;openModal('connector')}; $('trainBtn').onclick=()=>{menu.hidden=true;openModal('trainer')}; $('plus').onclick=()=>{menu.hidden=true;openModal('trainer')}; $('updateBtnMenu').onclick=()=>window.open('https://github.com/v1-byte/Miko-Ai/releases/tag/latest','_blank');
+try { lm=await loadModel('./model/'); st.textContent=`Model siap · offline · ${lm.cfg.n_layer} layer`; } catch(e) { st.textContent='Model belum siap: '+e.message; }
+$('f').onsubmit=async(e)=>{e.preventDefault();if(!lm||!$('q').value.trim())return;const msg=$('q').value.trim();$('q').value='';add('user',msg);const out=add('ai','');try{for await(const d of reply(lm,msg))out.textContent+=d;if(!out.textContent)out.textContent='Miko AI belum memiliki jawaban.'}catch(err){out.textContent='Miko AI mengalami error: '+err.message}log.scrollTop=log.scrollHeight};
+async function checkUpdate(){try{const local=await fetch(`./build.json?${Date.now()}`).then(r=>r.ok?r.json():null);if(!local)return;const remote=await fetch('https://api.github.com/repos/v1-byte/Miko-Ai/releases/tags/latest',{headers:{Accept:'application/vnd.github+json'}}).then(r=>r.ok?r.json():null);if(!remote||!remote.body||remote.body.includes(`commit \`${local.commit}\``))return;st.innerHTML='Versi baru tersedia · <button id="updateNow" class="secondary" style="padding:3px 8px">Unduh APK</button>';$('updateNow').onclick=()=>window.open(local.updateUrl,'_blank')}catch(_){} }
 checkUpdate();
-f.onsubmit = async (e) => {
-  e.preventDefault();
-  if (!lm || !q.value.trim()) return;
-  const msg = q.value.trim(); q.value = "";
-  add("u", msg); const out = add("a");
-  try {
-    for await (const d of reply(lm, msg)) { out.textContent += d; log.scrollTop = log.scrollHeight; }
-    if (!out.textContent) out.textContent = "Miko AI belum memiliki jawaban.";
-  } catch (err) {
-    out.textContent = `Miko AI mengalami error: ${err.message}`;
-  }
-};
+let chosen=[]; $('pick').onclick=()=>$('picker').click(); $('picker').onchange=()=>{chosen=[...$('picker').files];$('fileList').textContent=chosen.length?chosen.map(f=>`${f.name} (${Math.ceil(f.size/1024)} KB)`).join(' · '):'Belum ada file dipilih.'};
+const b64=async(file)=>{const bytes=new Uint8Array(await file.arrayBuffer());let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(s)};
+const textB64=(s)=>btoa(unescape(encodeURIComponent(s)));
+function auth(){const repo=$('repo').value.trim(),token=$('token').value.trim();if(!repo||!token)throw Error('Isi repository dan token GitHub terlebih dahulu.');return {repo,token,headers:{Authorization:`Bearer ${token}`,Accept:'application/vnd.github+json','Content-Type':'application/json'}}}
+$('connect').onclick=async()=>{const m=$('connMsg');try{const c=auth();const r=await fetch(`https://api.github.com/repos/${c.repo}`,{headers:c.headers});if(!r.ok)throw Error('GitHub menolak akses. Periksa token dan nama repo.');sessionStorage.setItem('miko_repo',c.repo);sessionStorage.setItem('miko_token',c.token);m.textContent='✓ GitHub tersambung: '+c.repo;m.className='ok'}catch(e){m.textContent=e.message;m.className='err'}};
+if(sessionStorage.getItem('miko_repo'))$('repo').value=sessionStorage.getItem('miko_repo');
+$('saveTrain').onclick=async()=>{const m=$('trainMsg');try{const c=auth();if(!chosen.length&&!$('dataText').value.trim())throw Error('Masukkan teks atau pilih minimal satu file.');const files=[...chosen];if($('dataText').value.trim())files.push(new File([$('dataText').value],`miko-note-${Date.now()}.md`,{type:'text/markdown'}));for(const file of files){const name=file.name.replace(/[^A-Za-z0-9._-]/g,'_');const path=`data/raw/user/${Date.now()}-${name}`;const content=file.name.toLowerCase().endsWith('.zip')?await b64(file):textB64(await file.text());let sha;const old=await fetch(`https://api.github.com/repos/${c.repo}/contents/${path}`,{headers:c.headers});if(old.ok)sha=(await old.json()).sha;const body={message:`data: tambah ${name}`,content,branch:'main',...(sha?{sha}:{})};const r=await fetch(`https://api.github.com/repos/${c.repo}/contents/${path}`,{method:'PUT',headers:c.headers,body:JSON.stringify(body)});if(!r.ok)throw Error(`Gagal menyimpan ${name} ke GitHub.`)}const run=await fetch(`https://api.github.com/repos/${c.repo}/actions/workflows/train.yml/dispatches`,{method:'POST',headers:c.headers,body:JSON.stringify({ref:'main',inputs:{steps:'2000',vocab:'256',layers:'2',embd:'64',block:'64',commit:'true'}})});if(!run.ok)throw Error('Data tersimpan, tetapi trigger training gagal. Jalankan workflow Latih model secara manual.');m.textContent='✓ Data tersimpan. Training dimulai di GitHub Actions.';m.className='ok';chosen=[];$('dataText').value='';$('fileList').textContent='Belum ada file dipilih.'}catch(e){m.textContent=e.message;m.className='err'}};
 </script></body></html>

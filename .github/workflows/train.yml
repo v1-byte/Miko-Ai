@@ -21,6 +21,21 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: "20" }
       - run: pip install numpy torch --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple
+      - name: Ekstrak ZIP dataset
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          root = Path("data/raw")
+          for archive in root.rglob("*.zip"):
+              dest = archive.parent / (archive.stem + "_extracted")
+              with ZipFile(archive) as z:
+                  for member in z.infolist():
+                      target = (dest / member.filename).resolve()
+                      if not str(target).startswith(str(dest.resolve())):
+                          raise RuntimeError(f"ZIP path tidak aman: {member.filename}")
+                  z.extractall(dest)
+          PY
       - name: Bangun dataset
         run: python data/build_dataset.py
       - name: Latih tokenizer
