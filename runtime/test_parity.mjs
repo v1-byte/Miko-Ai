@@ -3,12 +3,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { ZiperrLM, Tokenizer } from "./ziperr-lm.js";
+import { MikoAILM, Tokenizer } from "./miko-ai-lm.js";
 
 const dir = process.argv[2] || path.join(path.dirname(fileURLToPath(import.meta.url)), "../release");
 const rd = (f) => fs.readFileSync(path.join(dir, f));
 const manifest = JSON.parse(rd("model.json")), tokData = JSON.parse(rd("tokenizer.json")), parity = JSON.parse(rd("parity.json"));
-const lm = new ZiperrLM(manifest, rd("model.bin"), tokData);
+const lm = new MikoAILM(manifest, rd("model.bin"), tokData);
 let fail = 0;
 const check = (ok, msg) => { console.log((ok ? "OK   " : "GAGAL") + " " + msg); if (!ok) fail++; };
 

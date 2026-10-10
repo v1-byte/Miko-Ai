@@ -1,4 +1,4 @@
-# C_ziperr AI — model bahasa kode buatan sendiri
+# Miko AI — model bahasa kode buatan sendiri
 
 AI khusus **coding** yang dibuat 100% dari nol: tokenizer sendiri, arsitektur transformer sendiri,
 bobot acak yang dilatih dengan datasetmu sendiri. **Tidak memakai Qwen, GPT, Claude, Llama, atau model
@@ -6,7 +6,7 @@ pra-latih mana pun.** Dilatih dan dirilis lewat GitHub Actions, dijalankan di AP
 
 ## Struktur
 ```
-ziperr-ai/
+miko-ai/
 ├── data/
 │   ├── raw/                 ← KODE milikmu / berlisensi bebas (.js .py .html .css ...)
 │   ├── instruct/*.jsonl     ← tanya-jawab: {"user": "...", "assistant": "..."}
@@ -23,7 +23,7 @@ ziperr-ai/
 │   ├── release_format.py, parity.py
 ├── release/                 ← model hasil latih yang dipakai APK (di-commit)
 ├── runtime/                 ← mesin inferensi JavaScript murni (browser/APK/Node)
-│   ├── ziperr-lm.js         ← tokenizer + transformer + generate
+│   ├── miko-ai-lm.js         ← tokenizer + transformer + generate
 │   ├── analyzer.js          ← aturan analisis kode ZIP (API, CDN, aset, error)
 │   ├── assistant.js         ← gabung model + analyzer
 │   └── test_parity.mjs      ← bukti JS == Python

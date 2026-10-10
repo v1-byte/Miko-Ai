@@ -1,6 +1,6 @@
 """Tokenizer BPE tingkat-byte buatan sendiri (tanpa library tokenizer apa pun).
 
-Aturan HARUS identik dengan runtime/ziperr-lm.js agar hasil Python == JS.
+Aturan HARUS identik dengan runtime/miko-ai-lm.js agar hasil Python == JS.
 """
 import json
 import re

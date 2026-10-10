@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="id"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>C_ziperr AI</title>
+<title>Miko AI</title>
 <style>
 :root{color-scheme:dark}
 body{margin:0;font:16px system-ui;background:#0f1419;color:#e6edf3;display:flex;flex-direction:column;height:100dvh}
@@ -14,12 +14,12 @@ input{flex:1;padding:10px;border-radius:8px;border:1px solid #30363d;background:
 button{padding:10px 16px;border:0;border-radius:8px;background:#2f81f7;color:#fff;font:inherit}
 #st{font-size:12px;color:#8b949e;padding:0 16px 6px}
 </style></head><body>
-<header>C_ziperr AI · khusus coding</header>
+<header>Miko AI · khusus coding</header>
 <div id="st">Memuat model…</div>
 <div id="log"></div>
 <form id="f"><input id="q" placeholder="Tanya soal kode…" autocomplete="off"><button>Kirim</button></form>
 <script type="module">
-import { loadModel } from "./ai/ziperr-lm.js";
+import { loadModel } from "./ai/miko-ai-lm.js";
 import { reply } from "./ai/assistant.js";
 const log = document.getElementById("log"), st = document.getElementById("st");
 const add = (cls, txt = "") => { const d = document.createElement("div"); d.className = "m " + cls; d.textContent = txt; log.append(d); log.scrollTop = log.scrollHeight; return d; };

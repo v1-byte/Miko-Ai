@@ -1,4 +1,4 @@
-// Runtime AI C_ziperr: tokenizer + transformer (inferensi) murni JavaScript.
+// Runtime AI Miko AI: tokenizer + transformer (inferensi) murni JavaScript.
 // Jalan di browser / WebView APK / Node. Tanpa library, tanpa server.
 // Aturan tokenizer HARUS identik dengan tokenizer/bpe.py.
 
@@ -94,7 +94,7 @@ function linear(x, W, b, out, inn) {
 const K = Math.sqrt(2 / Math.PI);
 const gelu = (x) => 0.5 * x * (1 + Math.tanh(K * (x + 0.044715 * x * x * x)));
 
-export class ZiperrLM {
+export class MikoAILM {
   constructor(manifest, buffer, tokenizerData) {
     if (buffer instanceof Uint8Array) buffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
     this.cfg = manifest.config;
@@ -208,5 +208,5 @@ export async function loadModel(baseUrl = "./model/") {
   const get = (f) => fetch(baseUrl + f);
   const [m, b, t] = await Promise.all([get("model.json"), get("model.bin"), get("tokenizer.json")]);
   if (!m.ok || !b.ok || !t.ok) throw new Error("berkas model tidak ditemukan di " + baseUrl);
-  return new ZiperrLM(await m.json(), await b.arrayBuffer(), await t.json());
+  return new MikoAILM(await m.json(), await b.arrayBuffer(), await t.json());
 }
