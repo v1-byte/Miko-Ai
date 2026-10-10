@@ -1,0 +1,42 @@
+name: Rilis APK
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - name: Gerbang kualitas — runtime JS harus sama dengan Python
+        run: node runtime/test_parity.mjs release
+      - name: Siapkan aplikasi web (runtime + model)
+        run: bash scripts/prepare_app.sh
+      - name: Bungkus jadi APK (Capacitor)
+        working-directory: app
+        run: |
+          npm install
+          npx cap add android
+          npx cap sync android
+          cd android && chmod +x gradlew && ./gradlew assembleDebug
+      - name: Ganti nama APK
+        run: cp app/android/app/build/outputs/apk/debug/app-debug.apk C_ziperr-AI-${{ github.ref_name }}.apk
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            C_ziperr-AI-${{ github.ref_name }}.apk
+            release/model.json
+            release/model.bin
+            release/tokenizer.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        with:
+          name: apk
+          path: C_ziperr-AI-*.apk

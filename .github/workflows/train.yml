@@ -1,0 +1,47 @@
+name: Latih model
+on:
+  workflow_dispatch:
+    inputs:
+      steps:   { description: "Langkah latih", default: "2000" }
+      vocab:   { description: "Ukuran vocab tokenizer", default: "1024" }
+      layers:  { description: "n_layer", default: "4" }
+      embd:    { description: "n_embd", default: "128" }
+      block:   { description: "Panjang konteks", default: "256" }
+      commit:  { description: "Commit hasil ke release/ (true/false)", default: "true" }
+permissions:
+  contents: write
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: pip install numpy torch --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple
+      - name: Bangun dataset
+        run: python data/build_dataset.py
+      - name: Latih tokenizer
+        run: python tokenizer/train_tokenizer.py --vocab ${{ inputs.vocab }}
+      - name: Latih model
+        run: python train/train.py --steps ${{ inputs.steps }} --layers ${{ inputs.layers }} --embd ${{ inputs.embd }} --block ${{ inputs.block }}
+      - name: Evaluasi
+        run: python train/eval.py
+      - name: Ekspor
+        run: python export/export_weights.py --version "${{ github.run_number }}"
+      - name: Uji paritas Python vs JS
+        run: node runtime/test_parity.mjs release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: model-release
+          path: release/
+      - name: Commit release/
+        if: ${{ inputs.commit == 'true' }}
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add -f release/
+          git commit -m "model: latih run #${{ github.run_number }}" || echo "tidak ada perubahan"
+          git push
