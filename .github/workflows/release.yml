@@ -2,7 +2,11 @@ name: Rilis APK
 on:
   push:
     tags: ["v*"]
+    branches: [main]
   workflow_dispatch:
+concurrency:
+  group: miko-ai-release-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: write
 jobs:
@@ -30,6 +34,23 @@ jobs:
       - uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          files: |
+            Miko-AI-${{ github.ref_name }}.apk
+            release/model.json
+            release/model.bin
+            release/tokenizer.json
+      - name: Perbarui release otomatis latest
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Miko AI — latest
+          prerelease: true
+          make_latest: false
+          generate_release_notes: false
+          body: |
+            Build otomatis dari commit `${{ github.sha }}` pada branch `main`.
+            Release ini diperbarui setiap ada perubahan yang masuk ke `main`.
           files: |
             Miko-AI-${{ github.ref_name }}.apk
             release/model.json

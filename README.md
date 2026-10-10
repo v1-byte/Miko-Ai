@@ -50,7 +50,10 @@ python export/export_weights.py
 node runtime/test_parity.mjs release        # harus "Semua uji paritas lulus"
 ```
 Di GitHub: tab **Actions → Latih model → Run workflow** (hasil di-commit ke `release/`).
-Lalu rilis APK: `git tag v1.0.0 && git push --tags` → APK muncul di **Releases**.
+Setiap push ke branch `main` otomatis menjalankan test paritas, membangun APK, dan memperbarui
+release **[latest](https://github.com/v1-byte/Miko-Ai/releases/tag/latest)**. Jadi perubahan kode atau fitur
+yang sudah dipush ke GitHub akan tersedia otomatis di release latest.
+Untuk rilis versi resmi, gunakan `git tag v1.0.0 && git push --tags` → APK muncul di **Releases**.
 
 ## "Server AI di GitHub" — penjelasan jujur
 GitHub tidak menjalankan server yang selalu hidup. Pembagian tugasnya:
