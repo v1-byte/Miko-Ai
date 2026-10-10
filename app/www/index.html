@@ -31,7 +31,11 @@ f.onsubmit = async (e) => {
   if (!lm || !q.value.trim()) return;
   const msg = q.value.trim(); q.value = "";
   add("u", msg); const out = add("a");
-  for await (const d of reply(lm, msg)) { out.textContent += d; log.scrollTop = log.scrollHeight; }
-  if (!out.textContent) out.textContent = "(tidak ada jawaban — model perlu dilatih dengan data lebih banyak)";
+  try {
+    for await (const d of reply(lm, msg)) { out.textContent += d; log.scrollTop = log.scrollHeight; }
+    if (!out.textContent) out.textContent = "Miko AI belum memiliki jawaban.";
+  } catch (err) {
+    out.textContent = `Miko AI mengalami error: ${err.message}`;
+  }
 };
 </script></body></html>

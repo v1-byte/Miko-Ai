@@ -80,6 +80,10 @@ bidang sempit yang datanya kamu berikan. Untuk skala lebih besar jalankan skrip 
 `python train/train.py --layers 8 --embd 384 --heads 6 --block 512 --steps 20000`, commit `release/`.
 Tiap +1 jt parameter ≈ +4 MB berkas model di APK.
 
+Jika model kecil menghasilkan teks yang belum terbaca, runtime memakai fallback offline untuk pertanyaan
+umum dan menampilkan error dengan jelas. Untuk jawaban model yang lebih baik, tambahkan dataset dan latih
+ulang dengan lebih banyak langkah.
+
 ## Yang sudah diuji / belum
 - Diuji: tokenizer Python vs JS, inferensi JS vs referensi numpy (bobot acak), pembangun dataset.
 - **Belum dijalankan**: `model/gpt.py`, `train/*.py`, `export_weights.py` (butuh PyTorch), workflow GitHub,
