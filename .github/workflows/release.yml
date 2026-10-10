@@ -20,12 +20,14 @@ jobs:
         with: { distribution: temurin, java-version: "17" }
       - name: Gerbang kualitas — runtime JS harus sama dengan Python
         run: node runtime/test_parity.mjs release
+      - name: Pasang dependency aplikasi
+        working-directory: app
+        run: npm install
       - name: Siapkan aplikasi web (runtime + model)
         run: bash scripts/prepare_app.sh
       - name: Bungkus jadi APK (Capacitor)
         working-directory: app
         run: |
-          npm install
           npx cap add android
           cd .. && bash scripts/install_auto_update_android.sh
           cd app
