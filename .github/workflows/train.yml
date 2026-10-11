@@ -37,7 +37,9 @@ jobs:
                   z.extractall(dest)
           PY
       - name: Bangun dataset
-        run: python data/build_dataset.py
+        run: |
+          python data/validate_instruct.py
+          python data/build_dataset.py
       - name: Latih tokenizer
         run: python tokenizer/train_tokenizer.py --vocab ${{ inputs.vocab }}
       - name: Latih model

@@ -17,7 +17,8 @@ miko-ai/
 ├── model/gpt.py             ← transformer kecil (PyTorch, bobot acak)
 ├── train/
 │   ├── train.py             ← pelatihan dari nol → out/model.pt
-│   └── eval.py              ← perplexity + contoh jawaban
+│   ├── eval.py              ← perplexity + contoh jawaban
+│   └── eval_benchmark.py    ← tes coding terpisah dan simpan jawaban
 ├── export/
 │   ├── export_weights.py    ← model.pt → release/ (model.bin, model.json, tokenizer.json, parity.json)
 │   ├── release_format.py, parity.py
@@ -67,9 +68,34 @@ GitHub tidak menjalankan server yang selalu hidup. Pembagian tugasnya:
 ## Isi dataset (bagian paling menentukan)
 Kualitas AI = kualitas data. Aturan:
 1. `data/raw/`: kode yang **kamu tulis sendiri** atau berlisensi permisif (MIT/BSD/Apache) — simpan catatan sumber dan lisensinya di `data/SOURCES.md`. Jangan campur kode berlisensi tertutup.
-2. `data/instruct/*.jsonl`: satu baris satu pasang, jawaban benar dan ringkas. Mulai dari contoh di `seed.jsonl`. Ini yang mengajarkan format "tanya → jawab".
+2. `data/instruct/*.jsonl`: satu baris satu pasang, jawaban benar dan ringkas. Batch coding Indonesia ada di `id_core_batch_01.jsonl`; dataset contoh lain ada di `seed.jsonl`, `it_coding.jsonl`, dan `coding_practice.jsonl`. Ini yang mengajarkan format "tanya → jawab".
 3. Bersihkan: tidak ada kunci rahasia, tidak ada kode rusak sebagai contoh jawaban.
-4. Tambah bertahap, latih ulang, bandingkan `val_loss` di `eval.py`.
+4. Jalankan `python data/validate_instruct.py` sebelum training. Tambah data bertahap dan bandingkan hasil benchmark, bukan hanya `val_loss`.
+
+### Ukur kemampuan coding
+
+`tests/coding_benchmark.jsonl` berisi kasus uji yang sengaja tidak dimasukkan ke training.
+Setelah model dilatih, jalankan:
+
+```bash
+python train/eval_benchmark.py --ckpt out/model.pt
+```
+
+Jawaban tersimpan di `out/coding_benchmark_results.jsonl`. Tinjau tiap jawaban terhadap daftar
+`checks`; runner tidak memberikan skor otomatis karena kecocokan kata tidak cukup untuk menilai
+kebenaran kode. Jangan pindahkan pertanyaan benchmark ke folder `data/instruct`, agar pengukuran
+tetap terpisah dari data latih.
+
+### Urutan peningkatan yang disarankan
+
+1. Jalankan tes alur dan benchmark pada baseline.
+2. Periksa jawaban yang gagal, lalu tambah contoh latihan yang benar-benar menargetkan kelemahan itu.
+3. Latih ulang dan bandingkan jawaban benchmark, bukan hanya `val_loss`.
+4. Jika proses konsisten dan data berkualitas sudah cukup, eksperimenkan kapasitas model/GPU.
+
+Dataset contoh yang baru ditambahkan adalah titik awal edukatif, bukan jaminan model sudah menjadi
+programmer andal. Karena Miko-Ai dilatih dari bobot acak dengan model kecil, peningkatan dari contoh
+ini diperkirakan terbatas; kode yang dihasilkan tetap perlu diuji dan ditinjau manusia.
 
 ## Skala & ekspektasi (jujur)
 | Data | Model | Hasil wajar |
@@ -87,9 +113,13 @@ Jika model kecil menghasilkan teks yang belum terbaca, runtime memakai fallback 
 umum dan menampilkan error dengan jelas. Untuk jawaban model yang lebih baik, tambahkan dataset dan latih
 ulang dengan lebih banyak langkah.
 
-Dataset dari APK dapat disimpan lokal tanpa token GitHub melalui **Simpan lokal**. Konektor GitHub hanya
-diperlukan saat pengguna memilih **Sinkronkan GitHub & latih** untuk mengirim antrean dataset ke repository
-dan menjalankan training cloud. Dengan demikian input dataset tidak bergantung pada konektor.
+Dataset dari APK dapat disimpan lokal tanpa token GitHub melalui **Simpan antrean**; ini belum mengubah
+model yang sedang berjalan. Untuk mengirim data dan memulai training, pilih **Simpan permanen ke GitHub & latih**.
+File kode/proyek masuk ke `data/raw/`, sedangkan file `.jsonl` yang berisi satu objek
+`{"user":"...","assistant":"..."}` per baris masuk ke `data/instruct/` dan divalidasi sebelum dikirim.
+Untuk teks yang diketik, pilih jenis **Contoh tanya-jawab (JSONL)** dan masukkan satu objek JSON per baris.
+Setelah workflow selesai, model hasil ekspor diperbarui di repository; APK yang sedang terbuka tidak belajar
+seketika dan memerlukan build/update model untuk memakai bobot baru. Jangan unggah secret atau data pribadi.
 
 ## Yang sudah diuji / belum
 - Diuji: tokenizer Python vs JS, inferensi JS vs referensi numpy (bobot acak), pembangun dataset.
