@@ -2,11 +2,11 @@ name: Latih model
 on:
   workflow_dispatch:
     inputs:
-      steps:   { description: "Langkah latih", default: "4000" }
-      vocab:   { description: "Ukuran vocab tokenizer", default: "512" }
-      layers:  { description: "n_layer", default: "4" }
-      embd:    { description: "n_embd", default: "128" }
-      block:   { description: "Panjang konteks", default: "128" }
+      steps:   { description: "Langkah latih", default: "8000" }
+      vocab:   { description: "Ukuran vocab tokenizer", default: "2048" }
+      layers:  { description: "n_layer", default: "6" }
+      embd:    { description: "n_embd", default: "256" }
+      block:   { description: "Panjang konteks", default: "256" }
       commit:  { description: "Commit hasil ke release/ (true/false)", default: "true" }
 permissions:
   contents: write
