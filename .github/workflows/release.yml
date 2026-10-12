@@ -29,6 +29,19 @@ jobs:
         working-directory: app
         run: |
           npx cap add android
+          python3 - <<'PY'
+          import os, re
+          from pathlib import Path
+          p = Path("android/app/build.gradle")
+          s = p.read_text()
+          code = int(os.environ.get("GITHUB_RUN_NUMBER", "1"))
+          s, n1 = re.subn(r"versionCode\s+\d+", f"versionCode {code}", s, count=1)
+          s, n2 = re.subn(r'versionName\s+"[^"]+"', f'versionName "1.0.{code}"', s, count=1)
+          if n1 != 1 or n2 != 1:
+              raise SystemExit("versionCode/versionName tidak ditemukan")
+          p.write_text(s)
+          print(f"Android versionName=1.0.{code}, versionCode={code}")
+          PY
           cd .. && bash scripts/install_auto_update_android.sh
           cd app
           npx cap sync android
