@@ -30,6 +30,24 @@ const fallback = (message) => {
   return "Saya belum memahami pertanyaan itu dengan baik. Coba tanyakan dengan menyertakan bahasa pemrograman atau potongan kode yang ingin dianalisis.";
 };
 
+let knowledge = [];
+export const setKnowledge = (rows) => { knowledge = Array.isArray(rows) ? rows.filter((r) => r && r.user && r.assistant) : []; };
+const words = (s) => new Set((s.toLowerCase().match(/[a-z0-9]+/g) || []).filter((w) => w.length > 2));
+const retrieve = (message) => {
+  const query = words(message);
+  if (!query.size || !knowledge.length) return "";
+  let best = null, bestScore = 0;
+  for (const row of knowledge) {
+    const target = words(row.user);
+    let overlap = 0;
+    for (const w of query) if (target.has(w)) overlap++;
+    const phrase = row.user.toLowerCase().includes(message.trim().toLowerCase()) ? 0.5 : 0;
+    const score = overlap / Math.max(query.size, target.size) + phrase;
+    if (overlap && score > bestScore) { bestScore = score; best = row.assistant.trim(); }
+  }
+  return bestScore >= (query.size <= 3 ? 0.55 : 0.42) ? best : "";
+};
+
 const normalize = (s) => String(s || "")
   .replace(/<\|(?:assistant|user|code|pad)\|>/g, "")
   .split("<|end|>")[0]
@@ -52,6 +70,15 @@ const usable = (s) => {
 export async function* reply(lm, message, files, opts = {}) {
   if (Array.isArray(files) && files.length && /analis|periksa|cek|error|scan/i.test(message)) {
     yield formatReport(analyzeFiles(files));
+    return;
+  }
+  if (/^(halo|hai|hi|hello|pagi|siang|sore|malam)\b/i.test(message.trim())) {
+    yield fallback(message);
+    return;
+  }
+  const known = retrieve(message);
+  if (known) {
+    yield known;
     return;
   }
   let answer = "";
