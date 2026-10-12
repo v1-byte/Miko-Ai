@@ -3,9 +3,10 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 test -f release/model.bin || { echo "release/model.bin belum ada — latih dulu (lihat README)"; exit 1; }
-mkdir -p app/www/ai app/www/model
+mkdir -p app/www/ai app/www/model app/www/assets
 cp runtime/miko-ai-lm.js runtime/assistant.js runtime/analyzer.js app/www/ai/
 cp app/node_modules/@capacitor/core/dist/capacitor.js app/www/ai/capacitor.js
+cp assets/miko-ai-logo.png app/www/assets/miko-ai-logo.png
 cp release/model.json release/model.bin release/tokenizer.json app/www/model/
 commit="${GITHUB_SHA:-$(git rev-parse HEAD 2>/dev/null || echo dev)}"
 version="${GITHUB_REF_NAME:-dev}"
