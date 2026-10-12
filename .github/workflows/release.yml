@@ -25,6 +25,19 @@ jobs:
         run: npm install
       - name: Siapkan aplikasi web (runtime + model)
         run: bash scripts/prepare_app.sh
+      - name: Publikasikan remote hot-update bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rm -rf /tmp/miko-remote && mkdir -p /tmp/miko-remote
+          cp -a app/www/. /tmp/miko-remote/
+          cd /tmp/miko-remote
+          git init -b remote
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "remote: bundle from $GITHUB_SHA"
+          git push --force "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:remote
       - name: Bungkus jadi APK (Capacitor)
         working-directory: app
         run: |
