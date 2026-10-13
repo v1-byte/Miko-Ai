@@ -1,92 +1,83 @@
-# MIKO-AI FULL PROJECT - ONLINE ROUTER ANTI BOROS KUOTA
+# Miko AI — Offline model + Online Router (anti boros kuota)
 
-## APA INI?
-Project jadi untuk Miko-Ai jago 6 bidang: Web, Server, API, APK, Security, Coding.
-System: Topik 1 -> manggil Adapter 1 otomatis, kuota cuma 3KB per chat (bukan 1GB).
+AI coding yang bisa jalan **offline** di APK (model kecil dari nol) dan opsional **online** lewat router topik → adapter LoRA di HuggingFace, dengan token aman di Cloudflare Worker.
 
-## FILE YANG SUDAH JADI (TINGGAL UPLOAD VIA HP)
-- `js/router.js` -> deteksi topik (5KB)
-- `js/api.js` -> fetch irit kuota ke HuggingFace (ganti HF_TOKEN)
-- `adapters/config.json` -> daftar 6 adapter
-- `server/server.py` -> server gratis kalau mau pakai GitHub Codespaces
-- `notebooks/train_and_upload.ipynb` -> training + pecah 1GB + upload HF (jalan di Kaggle via HP)
-- `dataset_template/api_100_sample.jsonl` -> contoh 100 Q&A berkualitas
+## Status jujur (baca ini dulu)
 
-## CARA PASANG VIA HP (10 MENIT JADI)
-1. Buka github.com/v1-byte/Miko-Ai -> Upload file dari folder ini: `js/router.js` dan `js/api.js` (replace yang lama)
-2. Ganti `HF_TOKEN` di `js/api.js` dengan token asli dari huggingface.co/settings/tokens
-3. Commit.
-4. Buka Kaggle -> New Notebook -> Upload `notebooks/train_and_upload.ipynb` -> Run
-5. Tunggu 2 jam -> adapter jadi -> otomatis jadi API online
-6. Test di APK: `chatMiko("bikin API login aman")` -> harusnya balik jawaban, kuota 3KB.
+| Bagian | Status |
+|--------|--------|
+| Model lokal offline di APK | ✅ Ada & di-build otomatis |
+| Router topik 6 bidang | ✅ Ada (`runtime/topic-router.mjs`, `js/router.js`) |
+| Online client (opt-in) | ✅ Ada (`runtime/online-client.mjs`) |
+| Cloudflare Worker template | ✅ Ada (`server/worker.mjs`) — perlu di-deploy + secret |
+| Auto-update APK | ✅ Cek release `latest` |
+| 6 adapter LoRA di HuggingFace | ❌ Belum dilatih — **pending** |
+| Dataset 2000 Q&A/bidang | ❌ Baru template ~30–50 contoh/bidang |
+| Notebook training Kaggle | ✅ `notebooks/train_and_upload.ipynb` |
 
-## SOLUSI ANTI BOROS KUOTA
-- GitHub simpan backup pecah 20x50MB (repo miko-api-lora-1gb)
-- HuggingFace simpan yang online (server yang download 1GB, bukan HP)
-- HP user cuma kirim teks 1KB, terima 2KB.
+**Kesimpulan:** Offline sudah jalan. Online 6-adapter **belum** sampai adapter di-train & Worker diisi model ID.
 
-## YANG KURANG? INI SUDAH FULL
-- [x] Router deteksi topik
-- [x] API irit kuota
-- [x] Cara pecah 1GB jadi 50MB
-- [x] Notebook training
-- [x] Server gratis
-- [x] Dataset template 100 Q&A
-- [ ] Kamu tinggal isi dataset jadi 2000 Q&A per bidang (cicil via HP)
-
-## TOKEN
-- HF_TOKEN: https://huggingface.co/settings/tokens -> New Token -> Read -> Copy `hf_...`
-- Taruh di `js/api.js` baris 4
-- Kalau mau aman, pakai Cloudflare Worker (lihat file `docs/Miko-Full-Tutor.md` Bab 8)
-
-## KALAU MAU JADI 100%
-1. Isi dataset 2000 Q&A per bidang
-2. Training 6 adapter di Kaggle (1 per hari)
-3. Upload 6 ke HuggingFace
-4. APK kamu sudah jago 6 bidang, kuota irit.
-
----
-
-## Struktur Project
+## Alur online yang disarankan (aman, ~3KB/chat)
 
 ```
-Miko-Ai/
-├── js/
-│   ├── router.js          ← deteksi topik (web/server/api/apk/security/coding)
-│   └── api.js             ← chatMiko() irit kuota 3KB ke HuggingFace
-├── adapters/
-│   └── config.json        ← daftar 6 adapter LoRA
-├── server/
-│   ├── server.py          ← FastAPI mock server (Codespaces/Kaggle)
-│   ├── worker.mjs         ← Cloudflare Worker template (aman token)
-│   └── wrangler.jsonc
-├── runtime/               ← mesin inferensi lokal + online client
-├── model/                 ← transformer kecil dari nol (opsional offline)
-├── train/                 ← training lokal
-├── data/                  ← dataset
-├── app/                   ← APK Capacitor
-└── docs/Miko-Full-Tutor.md ← panduan lengkap 12 bab
+HP (APK)  --teks 1KB-->  Cloudflare Worker  --HF_TOKEN-->  HuggingFace model
+          <--jawab 2KB--                      <--generate--
 ```
 
-## Model Lokal (default) vs Online Router
+Token **tidak** disimpan di APK. Lihat `server/worker.mjs` dan `docs/Miko-Full-Tutor.md`.
 
-- **Offline (default)**: Model kecil dilatih dari bobot acak, jalan di APK tanpa internet.
-- **Online Router (opt-in)**: Deteksi topik → panggil adapter LoRA di HuggingFace. Kuota hanya ~3KB per chat.
-
-Lihat `docs/Miko-Full-Tutor.md` untuk status sebenarnya dan cara setup Cloudflare Worker agar token aman.
-
-## Alur Online Anti Boros
+## File penting
 
 ```
-User ketik di APK → js/router.js deteksi topik
-                 → js/api.js kirim 1KB ke HF Inference
-                 → HF server yang load adapter (bukan HP)
-                 → Balik jawaban 2KB
+js/router.js              deteksi topik
+js/api.js                 chatMiko() — utamakan WORKER_URL
+adapters/config.json      daftar target adapter + status
+server/worker.mjs         proxy aman + rate limit
+server/server.py          mock FastAPI (Codespaces)
+notebooks/train_and_upload.ipynb   train 1 LoRA + upload HF
+dataset_template/{api,server,web,apk,security,coding}/
+runtime/                  inferensi lokal + online client
+app/                      Capacitor APK shell
 ```
 
-## Catatan Penting
+## Cara lanjut biar online benar-benar jalan
 
-- Ganti `HF_TOKEN` di `js/api.js` sebelum dipakai.
-- Adapter `v1-byte/miko-*-lora` harus di-train & upload dulu di HuggingFace.
-- Jangan commit token asli ke repo.
-- Untuk keamanan token, gunakan Cloudflare Worker (`server/worker.mjs`).
+1. **Isi dataset** per bidang (cicil; kualitas > kuantitas). Format JSONL:
+   `{"user":"...","assistant":"..."}`
+2. **Train di Kaggle** (GPU): buka `notebooks/train_and_upload.ipynb`, set `DOMAIN` + `HF_TOKEN`, Run.
+   Ulangi untuk `api`, `server`, `web`, `apk`, `security`, `coding`.
+3. **Deploy Worker** (`server/worker.mjs`):
+   - `npx wrangler secret put HF_TOKEN`
+   - Set env: `MIKO_MODEL_API`, `MIKO_MODEL_SERVER`, … atau `MIKO_MODEL_DEFAULT`
+   - `ALLOWED_ORIGINS` = origin APK/web kamu
+4. Di APK: aktifkan online + isi URL Worker.
+5. Push ke `main` → Actions bangun APK + update release `latest` (auto-update).
+
+## Model lokal (default)
+
+```bash
+pip install -r requirements.txt
+python data/build_dataset.py
+python tokenizer/train_tokenizer.py --vocab 1024
+python train/train.py --steps 2000
+python export/export_weights.py
+node runtime/test_parity.mjs release
+```
+
+Atau di GitHub: **Actions → Latih model**.
+
+## APK & auto-update
+
+- Setiap push `main` memicu workflow **Rilis APK**.
+- APK masuk release tag `latest`.
+- APK yang terpasang bisa cek update (user tetap konfirmasi install).
+
+## Keamanan
+
+- Jangan commit `HF_TOKEN` / GitHub PAT.
+- Jangan taruh secret di `js/api.js` yang ikut di-bundle APK.
+- Pakai Worker sebagai proxy.
+
+## Lisensi data
+
+Hanya kode milikmu atau berlisensi permisif di `data/raw/`. Catat sumber di `data/SOURCES.md`.

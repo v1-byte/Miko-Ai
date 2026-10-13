@@ -1,13 +1,26 @@
 #!/usr/bin/env bash
-# Salin runtime + model hasil latih ke app/www agar siap dibungkus jadi APK.
+# Salin runtime + model hasil latih + router online ke app/www agar siap dibungkus jadi APK.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 test -f release/model.bin || { echo "release/model.bin belum ada — latih dulu (lihat README)"; exit 1; }
-mkdir -p app/www/ai app/www/model app/www/assets
-cp runtime/miko-ai-lm.js runtime/assistant.js runtime/analyzer.js runtime/topic-router.mjs runtime/online-client.mjs app/www/ai/
+mkdir -p app/www/ai app/www/model app/www/assets app/www/js app/www/adapters
+
+# Runtime lokal + online client (jalur aman via Worker)
+cp runtime/miko-ai-lm.js runtime/assistant.js runtime/analyzer.js \
+   runtime/topic-router.mjs runtime/online-client.mjs app/www/ai/
+
+# Router & API helper (opsional; prefer Worker agar token tidak di APK)
+if [[ -d js ]]; then
+  cp js/router.js js/api.js app/www/js/ 2>/dev/null || true
+fi
+if [[ -f adapters/config.json ]]; then
+  cp adapters/config.json app/www/adapters/
+fi
+
 cp app/node_modules/@capacitor/core/dist/capacitor.js app/www/ai/capacitor.js
 cp assets/miko-ai-logo.png app/www/assets/miko-ai-logo.png
 cp release/model.json release/model.bin release/tokenizer.json app/www/model/
+
 python3 - <<'PY'
 import json
 from pathlib import Path
@@ -22,9 +35,21 @@ for path in sorted(Path("data/instruct").glob("*.jsonl")):
             continue
         if isinstance(row.get("user"), str) and isinstance(row.get("assistant"), str):
             rows.append({"user": row["user"], "assistant": row["assistant"]})
+# sertakan template domain jika ada
+for path in sorted(Path("dataset_template").rglob("*.jsonl")):
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(row.get("user"), str) and isinstance(row.get("assistant"), str):
+            rows.append({"user": row["user"], "assistant": row["assistant"]})
 Path("app/www/ai/knowledge.json").write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
 print(f"knowledge base: {len(rows)} pasangan")
 PY
+
 commit="${GITHUB_SHA:-$(git rev-parse HEAD 2>/dev/null || echo dev)}"
 version="${GITHUB_REF_NAME:-dev}"
 python3 - "$commit" "$version" <<'PY'
