@@ -3,6 +3,7 @@ __pycache__/
 node_modules/
 out/
 data/processed/
+data/external/
 app/android/
 app/www/ai/
 app/www/model/

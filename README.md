@@ -72,6 +72,12 @@ Kualitas AI = kualitas data. Aturan:
 3. Bersihkan: tidak ada kunci rahasia, tidak ada kode rusak sebagai contoh jawaban.
 4. Jalankan `python data/validate_instruct.py` sebelum training. Tambah data bertahap dan bandingkan hasil benchmark, bukan hanya `val_loss`.
 
+Dataset eksternal, syarat lisensi, dan langkah impor lokal dijelaskan di [`data/EXTERNAL_DATASETS.md`](data/EXTERNAL_DATASETS.md). Importer tidak memasukkan data eksternal ke Git dan tidak mengunduh StarCoderData. Setelah impor dan tinjauan lisensi, gunakan direktori eksternal secara eksplisit, misalnya:
+```bash
+python data/build_dataset.py --extra-instruct data/external/instruct
+```
+Untuk data kode mentah lokal, gunakan `--extra-raw data/external/raw-starcoder`. Direktori eksternal diabaikan Git dan tidak dipakai secara default.
+
 ### Ukur kemampuan coding
 
 `tests/coding_benchmark.jsonl` berisi kasus uji yang sengaja tidak dimasukkan ke training.
