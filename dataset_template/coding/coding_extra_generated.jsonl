@@ -1,0 +1,10 @@
+{"user": "cara tulis unit test sederhana", "assistant": "Input diketahui → panggil fungsi → assert output. Satu assert fokus per test. Nama test menjelaskan perilaku."}
+{"user": "code review checklist singkat", "assistant": "Benarkah edge case? Error handling? Secret? Performa kasar? Tes ada? API breaking?"}
+{"user": "semantic commit", "assistant": "`feat:`, `fix:`, `docs:`, `chore:`. Memudahkan changelog dan bisect."}
+{"user": "hindari magic number", "assistant": "```js\nconst MAX_RETRY = 3;\n```\nLebih jelas daripada angka mentah di kondisi."}
+{"user": "null vs undefined JS", "assistant": "undefined: belum diisi. null: sengaja kosong. Prefer null untuk 'tidak ada nilai' eksplisit di data API."}
+{"user": "immutable update array", "assistant": "`[...arr, item]` atau `.toSpliced` daripada push jika state React."}
+{"user": "cara baca diff git", "assistant": "`git diff` sebelum commit. Fokus file sensitif. Jangan commit console.log debug massal."}
+{"user": "error message untuk manusia", "assistant": "Jelaskan apa yang salah + cara perbaiki jika bisa. Hindari hanya 'Error' tanpa konteks."}
+{"user": "rekursi vs loop", "assistant": "Loop biasanya lebih aman (tidak stack overflow). Rekursi cocok tree/divide-and-conquer dengan base case jelas."}
+{"user": "kapan pakai TypeScript", "assistant": "Project menengah+ atau tim: type mengurangi bug API contract. Script kecil sekali jalan: JS bisa cukup."}

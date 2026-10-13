@@ -1,0 +1,10 @@
+{"user": "cara cek disk penuh Ubuntu", "assistant": "`df -h` dan `du -sh /* 2>/dev/null | sort -h`. Bersihkan log journal: `journalctl --vacuum-size=200M`."}
+{"user": "setup swap 2GB", "assistant": "```bash\nsudo fallocate -l 2G /swapfile\nsudo chmod 600 /swapfile\nsudo mkswap /swapfile\nsudo swapon /swapfile\necho '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab\n```"}
+{"user": "Nginx 502 artinya apa", "assistant": "Upstream (Node/PHP) down atau timeout. Cek `systemctl status`, log error Nginx, dan `proxy_read_timeout`."}
+{"user": "PM2 cluster mode", "assistant": "`pm2 start app.js -i max` memakai semua CPU. Pastikan app stateless (session di Redis)."}
+{"user": "backup otomatis ke R2/S3", "assistant": "Script tar/pg_dump lalu `aws s3 cp` atau wrangler r2. Simpan retensi 7–30 hari, uji restore."}
+{"user": "harden SSH", "assistant": "Nonaktifkan password login, pakai key, ganti port opsional, `AllowUsers`, fail2ban. Jangan matikan SSH sebelum uji key baru."}
+{"user": "Docker compose dasar API+DB", "assistant": "Service `api` + `db` (postgres), network internal, volume untuk data, env file tidak di-commit."}
+{"user": "cara rotate log Nginx", "assistant": "logrotate biasanya sudah ada. Pastikan `access.log` tidak memenuhi disk; kompres harian."}
+{"user": "healthcheck Docker", "assistant": "```yaml\nhealthcheck:\n  test: [\"CMD\", \"curl\", \"-f\", \"http://localhost:3000/health\"]\n  interval: 30s\n```"}
+{"user": "beda VPS vs serverless", "assistant": "VPS: kontrol penuh, biaya tetap, kamu jaga uptime. Serverless: scale otomatis, cold start, cocok traffic sporadis."}

@@ -40,6 +40,12 @@ runtime/                  inferensi lokal + online client
 app/                      Capacitor APK shell
 ```
 
+## Setup online lengkap
+
+Lihat **[docs/SETUP-ONLINE-FULL.md](docs/SETUP-ONLINE-FULL.md)** (HF token → Worker → APK).
+
+Default Worker memakai model publik Qwen2.5-Coder agar **online bisa diuji dulu** sebelum LoRA custom.
+
 ## Cara lanjut biar online benar-benar jalan
 
 1. **Isi dataset** per bidang (cicil; kualitas > kuantitas). Format JSONL:

@@ -1,0 +1,10 @@
+{"user": "password reset token aman", "assistant": "Token random panjang, hash di DB, expiry pendek, one-time use. Kirim link hanya ke email terverifikasi."}
+{"user": "IDOR itu apa", "assistant": "Insecure Direct Object Reference: user ubah id di URL/API dan akses data orang lain. Mitigasi: cek ownership di server tiap request."}
+{"user": "secret di git terlanjur", "assistant": "Rotate secret segera, hapus dari history jika perlu (`git filter-repo`), anggap bocor. Pakai secret scanning."}
+{"user": "HTTPS only", "assistant": "Redirect HTTP→HTTPS, HSTS header, jangan mixed content. Cookie session: Secure + HttpOnly + SameSite."}
+{"user": "validasi upload file", "assistant": "Cek MIME + ekstensi + magic bytes, batasi size, rename file, scan jika perlu, simpan di luar webroot."}
+{"user": "least privilege DB user", "assistant": "User app hanya CRUD tabel yang perlu, bukan superuser. Pisah user migrasi vs runtime."}
+{"user": "log injection", "assistant": "Sanitize newline di log yang berisi input user agar tidak memalsukan entri log."}
+{"user": "dependency pin version", "assistant": "Lockfile (package-lock) di-commit. Review update major. npm audit di CI."}
+{"user": "2FA untuk admin", "assistant": "Wajibkan TOTP untuk akun berhak tinggi. Backup codes disimpan offline."}
+{"user": "jangan trust client", "assistant": "Semua otorisasi di server. Hidden field / disabled button bukan kontrol keamanan."}

@@ -4,14 +4,14 @@
   "main": "worker.mjs",
   "compatibility_date": "2026-10-13",
   "vars": {
-    "ALLOWED_ORIGINS": "capacitor://localhost,http://localhost,https://localhost",
-    "MIKO_MODEL_DEFAULT": "",
-    "MIKO_MODEL_WEB": "",
-    "MIKO_MODEL_SERVER": "",
-    "MIKO_MODEL_API": "",
-    "MIKO_MODEL_APK": "",
-    "MIKO_MODEL_SECURITY": "",
-    "MIKO_MODEL_CODING": ""
+    "ALLOWED_ORIGINS": "capacitor://localhost,http://localhost,https://localhost,http://127.0.0.1",
+    "MIKO_MODEL_DEFAULT": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "MIKO_MODEL_WEB": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "MIKO_MODEL_SERVER": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "MIKO_MODEL_API": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "MIKO_MODEL_APK": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "MIKO_MODEL_SECURITY": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "MIKO_MODEL_CODING": "Qwen/Qwen2.5-Coder-7B-Instruct"
   },
   "ratelimits": [
     {

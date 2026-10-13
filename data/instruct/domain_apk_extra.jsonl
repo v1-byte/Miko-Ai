@@ -1,0 +1,10 @@
+{"user": "izin kamera Capacitor", "assistant": "Install `@capacitor/camera`, minta permission runtime, tambah permission di AndroidManifest sesuai plugin docs."}
+{"user": "cara ganti app id", "assistant": "Di `capacitor.config` + `applicationId` di `android/app/build.gradle`. Uninstall app lama jika id berubah."}
+{"user": "deep link dasar", "assistant": "Intent filter di AndroidManifest untuk https domain. Verifikasi assetlinks.json di domain."}
+{"user": "simpan preference lokal", "assistant": "`@capacitor/preferences` atau localStorage di WebView untuk setting non-sensitif."}
+{"user": "beda APK dan AAB", "assistant": "AAB untuk Play Store (Google generate split). APK langsung install sideload/testing."}
+{"user": "proguard/R8", "assistant": "Minify release shrink code. Keep rules untuk reflection/plugin native agar tidak break."}
+{"user": "webview putih blank", "assistant": "Cek path `server.url` / `webDir`, CORS, cleartext HTTP disabled di Android 9+. Logcat + chrome inspect."}
+{"user": "versi code vs name", "assistant": "versionCode integer naik tiap release. versionName string tampilan user (1.0.3)."}
+{"user": "background task batasannya", "assistant": "Android batasi background. Pakai WorkManager untuk tugas terjadwal; jangan andalkan timer JS saat app killed."}
+{"user": "tes di emulator vs HP asli", "assistant": "Emulator cepat iterasi; HP asli wajib untuk kamera, performa, vendor-specific bug."}

@@ -1,0 +1,10 @@
+{"user": "cara lazy load component React", "assistant": "```js\nconst Page = React.lazy(() => import('./Page'));\n<Suspense fallback={<div>Loading…</div>}><Page /></Suspense>\n```"}
+{"user": "cegah layout shift gambar", "assistant": "Set width/height atau aspect-ratio di CSS. Pakai `width` `height` attribute pada img."}
+{"user": "debounce search input", "assistant": "```js\nfunction debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }\n```\nPakai 300ms untuk search API."}
+{"user": "cara set title halaman SPA", "assistant": "`react-helmet-async` atau `document.title = '...'` di useEffect per route."}
+{"user": "env variable Vite", "assistant": "Prefix `VITE_`. Akses `import.meta.env.VITE_API_URL`. Jangan taruh secret di frontend env."}
+{"user": "form controlled vs uncontrolled", "assistant": "Controlled: value + onChange di state React. Uncontrolled: ref. Controlled lebih mudah validasi live."}
+{"user": "aksesibilitas tombol icon", "assistant": "Tambah `aria-label=\"Kirim\"` jika teks tidak terlihat. Fokus keyboard harus terlihat."}
+{"user": "cara cache fetch browser", "assistant": "HTTP Cache-Control dari server. Di client, SWR/React Query untuk stale-while-revalidate."}
+{"user": "bundle size besar", "assistant": "Analisis `npx vite-bundle-visualizer`. Code-split route, hindari import library berat utuh."}
+{"user": "CORS error di browser artinya", "assistant": "Browser blok response cross-origin tanpa header CORS. Perbaiki di **server** API, bukan hanya frontend."}

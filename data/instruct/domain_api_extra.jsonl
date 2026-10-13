@@ -1,0 +1,10 @@
+{"user": "buat endpoint health check Express", "assistant": "```js\napp.get('/health', (req, res) => res.json({ ok: true, ts: Date.now() }));\n```\nPakai untuk load balancer / uptime monitor."}
+{"user": "cara paginasi REST API", "assistant": "Pakai `?page=1&limit=20`. Validasi limit max (mis. 100). Response: `{ data, page, limit, total }`. Hindari OFFSET besar di tabel besar — prefer cursor/keyset pagination."}
+{"user": "beda PUT vs PATCH", "assistant": "PUT biasanya replace resource utuh. PATCH partial update. Di API praktis: dokumentasikan dengan jelas; banyak tim pakai PATCH untuk update field tertentu."}
+{"user": "cara versioning header API", "assistant": "Selain `/v1`, bisa `Accept: application/vnd.miko.v1+json`. URL versioning lebih mudah di-cache dan dipahami pemula."}
+{"user": "middleware logging request", "assistant": "```js\napp.use((req,res,next)=>{ console.log(req.method, req.path); next(); });\n```\nJangan log body yang berisi password/token."}
+{"user": "cara return 404 yang konsisten", "assistant": "```js\nres.status(404).json({ error: 'not_found', message: 'Resource tidak ada' });\n```\nFormat error seragam memudahkan client."}
+{"user": "webhook retry best practice", "assistant": "Server penerima harus idempotent (pakai event id). Pengirim retry dengan backoff. Verifikasi signature HMAC."}
+{"user": "OpenAPI singkat", "assistant": "Tulis spesifikasi OpenAPI 3, generate docs Swagger UI. Contract-first mengurangi salah paham frontend-backend."}
+{"user": "rate limit Redis", "assistant": "Simpan counter per key `rl:{ip}:{route}` dengan TTL window. Atau pakai library `rate-limiter-flexible`."}
+{"user": "file download aman", "assistant": "Jangan concat path user ke filesystem (`../../etc/passwd`). Pakai basename + whitelist folder. Set Content-Disposition."}
