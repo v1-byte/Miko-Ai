@@ -1,0 +1,177 @@
+================================================================================
+CATATAN SISA PEKERJAAN — MIKO-AI
+Update : 2026-10-13
+Repo   : https://github.com/v1-byte/Miko-Ai
+================================================================================
+
+Dokumen ini memisahkan apa yang SUDAH SELESAI di repo dan apa yang MASIH
+HARUS DIKERJAKAN di akun / perangkat kamu.
+
+
+--------------------------------------------------------------------------------
+1. YANG SUDAH SELESAI (DI GITHUB)
+--------------------------------------------------------------------------------
+
+[x] Model lokal offline          - ada di release/, jalan di APK tanpa internet
+[x] Build APK otomatis           - workflow release.yml tiap push main
+[x] Auto-update APK              - cek release tag "latest"
+[x] Router topik 6 bidang        - runtime/topic-router.mjs, js/router.js
+[x] Online client (opt-in)       - runtime/online-client.mjs (default MATI)
+[x] Cloudflare Worker template   - server/worker.mjs + wrangler.jsonc
+[x] Default model online         - Qwen/Qwen2.5-Coder-7B-Instruct (publik, sementara)
+[x] Dataset template 6 domain    - dataset_template/{api,server,web,apk,security,coding}/
+[x] Sample di data/instruct/     - domain samples + extra generated
+[x] Notebook train LoRA          - notebooks/train_and_upload.ipynb
+[x] prepare_app.sh               - menyertakan js/ + adapters/ ke APK
+[x] Panduan setup online         - docs/SETUP-ONLINE-FULL.md
+[x] README status jujur          - tidak mengklaim LoRA custom sudah live
+
+
+--------------------------------------------------------------------------------
+2. SISA PEKERJAAN — WAJIB AGAR ONLINE HIDUP
+--------------------------------------------------------------------------------
+
+Kerjakan BERURUTAN. Tanpa ini, mode online di APK belum bisa menjawab.
+
+
+CHECKLIST A — ONLINE DASAR (sekitar 15–30 menit)
+------------------------------------------------
+
+[ ] A1. Buat akun / login HuggingFace
+        https://huggingface.co
+
+[ ] A2. Buat Access Token
+        https://huggingface.co/settings/tokens
+        - Read  = cukup untuk inference
+        - Write = jika nanti upload LoRA
+        Simpan hf_... di tempat aman.
+        JANGAN commit ke git. JANGAN kirim di chat publik.
+
+[ ] A3. Install Wrangler & login Cloudflare
+        git clone https://github.com/v1-byte/Miko-Ai.git
+        cd Miko-Ai/server
+        npm install -g wrangler
+        npx wrangler login
+
+[ ] A4. Set secret token
+        npx wrangler secret put HF_TOKEN
+        (tempel token hf_... saat diminta)
+
+[ ] A5. Deploy Worker
+        npx wrangler deploy
+        Catat URL, contoh:
+        https://miko-ai-online-router.<akun>.workers.dev
+
+[ ] A6. Pastikan ALLOWED_ORIGINS di wrangler.jsonc berisi:
+        - capacitor://localhost   (untuk APK)
+        - origin browser jika uji di web
+        Deploy ulang jika diubah.
+
+[ ] A7. Install APK dari:
+        https://github.com/v1-byte/Miko-Ai/releases/tag/latest
+
+[ ] A8. Di APK: Menu (tiga titik) -> Router online opsional
+        - Tempel: https://URL-WORKER-KAMU/chat
+        - Centang aktifkan -> Simpan
+        - JANGAN isi HF token di APK
+
+[ ] A9. Uji chat, contoh:
+        "bikin API login Express anti brute force"
+        Status harus menunjukkan mode online + topik (mis. api)
+
+>>> SELESAI A = online sudah jalan memakai model publik Qwen
+    (bukan LoRA custom).
+
+
+CHECKLIST B — LORA CUSTOM 6 BIDANG (opsional, bertahap)
+-------------------------------------------------------
+
+Hanya jika ingin adapter sendiri v1-byte/miko-*-lora.
+
+Untuk SETIAP domain: api -> server -> web -> apk -> security -> coding
+
+[ ] B1. Perbanyak dataset di dataset_template/<domain>/
+        Format per baris JSONL:
+        {"user":"...","assistant":"..."}
+        Target realistis: 500-2000 Q&A BENAR & tested (bukan spam)
+
+[ ] B2. Buka Kaggle -> New Notebook -> GPU (T4)
+        https://kaggle.com
+
+[ ] B3. Pakai notebooks/train_and_upload.ipynb
+        - Set DOMAIN (mis. api)
+        - Set HF_TOKEN (Write)
+        - Pastikan file JSONL terbaca
+
+[ ] B4. Run training -> upload ke v1-byte/miko-<domain>-lora
+
+[ ] B5. Di Cloudflare, ganti env model:
+        MIKO_MODEL_API=v1-byte/miko-api-lora
+        (dst. per domain)
+        atau biarkan MIKO_MODEL_DEFAULT sebagai fallback
+
+[ ] B6. npx wrangler deploy lagi
+
+[ ] B7. Update adapters/config.json status -> online (opsional)
+
+Ulangi B1-B5 sampai 6 domain selesai (boleh 1 domain per hari).
+
+
+CHECKLIST C — KUALITAS & PRODUKSI (disarankan)
+----------------------------------------------
+
+[ ] C1. Isi dataset serius (kualitas lebih penting dari jumlah)
+[ ] C2. Monitor billing / kuota HuggingFace
+[ ] C3. Perketat ALLOWED_ORIGINS (jangan * di production)
+[ ] C4. Jangan commit secret (HF token, GitHub PAT, keystore)
+[ ] C5. Keystore release Android jika sebar APK non-debug / Play Store
+[ ] C6. Uji offline: matikan online -> model lokal masih menjawab
+[ ] C7. Uji auto-update: pasang APK lama -> cek update ke latest
+
+
+--------------------------------------------------------------------------------
+3. YANG TIDAK PERLU DIKERJAKAN LAGI (SUDAH DI REPO)
+--------------------------------------------------------------------------------
+
+- Menulis ulang router topik dari nol
+- Membuat template Worker dari nol
+- Membuat notebook training dari nol
+- Setup workflow build APK
+- Menulis klaim palsu "6 adapter sudah live" tanpa training
+
+
+--------------------------------------------------------------------------------
+4. PRIORITAS SINGKAT
+--------------------------------------------------------------------------------
+
+P0  Checklist A (HF + Worker + APK)     -> Online hidup
+P1  Dataset + 1 LoRA (api)              -> Spesialisasi pertama
+P2  5 LoRA sisanya                      -> 6 bidang custom
+P3  Hardening (origin, billing, keystore) -> Lebih aman / rilis
+
+
+--------------------------------------------------------------------------------
+5. LINK CEPAT
+--------------------------------------------------------------------------------
+
+Setup online : docs/SETUP-ONLINE-FULL.md
+Worker       : server/worker.mjs , server/wrangler.jsonc
+Notebook     : notebooks/train_and_upload.ipynb
+Release APK  : https://github.com/v1-byte/Miko-Ai/releases/tag/latest
+Actions      : https://github.com/v1-byte/Miko-Ai/actions
+Sisa kerja   : docs/SISA-PEKERJAAN.md  (versi Markdown)
+               docs/SISA-PEKERJAAN.txt (versi ini)
+
+
+--------------------------------------------------------------------------------
+6. CATATAN JUJUR
+--------------------------------------------------------------------------------
+
+- Offline SUDAH bisa dipakai tanpa langkah di atas.
+- Online BELUM hidup sampai Checklist A selesai di akun kamu.
+- LoRA v1-byte/miko-*-lora BELUM dilatih; sementara Worker
+  memakai model publik Qwen.
+- Training 6 adapter butuh waktu GPU + dataset berkualitas —
+  tidak instan.
+
+================================================================================
