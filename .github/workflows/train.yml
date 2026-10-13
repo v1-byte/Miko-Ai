@@ -50,6 +50,8 @@ jobs:
         run: python export/export_weights.py --version "${{ github.run_number }}"
       - name: Uji paritas Python vs JS
         run: node runtime/test_parity.mjs release
+      - name: Uji router online/offline dan Worker
+        run: node runtime/test_online_router.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: model-release

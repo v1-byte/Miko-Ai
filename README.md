@@ -51,12 +51,7 @@ python export/export_weights.py
 node runtime/test_parity.mjs release        # harus "Semua uji paritas lulus"
 ```
 Di GitHub: tab **Actions → Latih model → Run workflow** (hasil di-commit ke `release/`).
-Setiap push ke branch `main` otomatis menjalankan test paritas, membangun APK, dan memperbarui
-release **[latest](https://github.com/v1-byte/Miko-Ai/releases/tag/latest)**. Jadi perubahan kode atau fitur
-yang sudah dipush ke GitHub akan tersedia otomatis di release latest.
-APK juga memeriksa release latest saat dibuka dan menampilkan tombol unduh ketika ada build baru.
-Android tetap meminta konfirmasi pengguna saat memasang APK; pembaruan diam-diam tidak diizinkan Android
-untuk APK di luar Play Store.
+Setiap push ke branch `main` memicu workflow rilis. Jika workflow selesai sukses, ia menerbitkan bundle web ke branch `remote` dan memperbarui release **[latest](https://github.com/v1-byte/Miko-Ai/releases/tag/latest)**. APK memeriksa SHA commit release terbaru, mencoba mengunduh APK yang sesuai saat aplikasi aktif, dan Android tetap meminta konfirmasi pengguna sebelum memasang APK. Keberhasilan build/release harus diverifikasi di tab Actions; push saja tidak menjamin APK latest terbit.
 Untuk rilis versi resmi, gunakan `git tag v1.0.0 && git push --tags` → APK muncul di **Releases**.
 
 ## "Server AI di GitHub" — penjelasan jujur
@@ -126,6 +121,16 @@ File kode/proyek masuk ke `data/raw/`, sedangkan file `.jsonl` yang berisi satu 
 Untuk teks yang diketik, pilih jenis **Contoh tanya-jawab (JSONL)** dan masukkan satu objek JSON per baris.
 Setelah workflow selesai, model hasil ekspor diperbarui di repository; APK yang sedang terbuka tidak belajar
 seketika dan memerlukan build/update model untuk memakai bobot baru. Jangan unggah secret atau data pribadi.
+
+## Router online opsional (default mati)
+
+Miko-Ai tetap bekerja offline dengan model lokal dan knowledge retrieval. Klasifikasi topik `web`, `server`, `api`, `apk`, `security`, dan `coding` hanya memilih arahan/prompt; fitur ini **bukan** enam adapter yang telah dilatih. Template proxy Worker ada di [`server/`](server/), tetapi belum dideploy dan belum ada model provider yang dikonfigurasi.
+
+Untuk mengaktifkan, ikuti [`server/README.md`](server/README.md), set model ID yang benar-benar tersedia, simpan `HF_TOKEN` hanya sebagai Cloudflare Worker Secret, deploy, lalu masukkan URL `/chat` di **Menu → Router online opsional**. Saat aktif, pertanyaan teks dikirim ke Worker/provider eksternal; analisis berkas tetap lokal. Jangan kirim rahasia atau data pribadi. Jika online gagal, aplikasi kembali ke knowledge/model lokal.
+
+Tidak ada jaminan **3 KB per chat**: kode membatasi request sampai 8 KB, sementara respons dan biaya bergantung panjang output/provider. Per dokumentasi harga Hugging Face yang diperiksa 13 Oktober 2026, akun gratis tidak memperoleh kredit bulanan Inference Providers; periksa harga terkini sebelum mengaktifkan. Enam ID adapter dalam catatan lama belum diverifikasi dan tidak digunakan. Koreksi terperinci ada di [`docs/Miko-Full-Tutor.md`](docs/Miko-Full-Tutor.md).
+
+Tes router dan Worker mock: `node runtime/test_online_router.mjs`. Tes ini tidak membuktikan Worker atau akun provider sudah dikonfigurasi.
 
 ## Yang sudah diuji / belum
 - Diuji: tokenizer Python vs JS, inferensi JS vs referensi numpy (bobot acak), pembangun dataset.

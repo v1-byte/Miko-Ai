@@ -20,6 +20,10 @@ jobs:
         with: { distribution: temurin, java-version: "17" }
       - name: Gerbang kualitas — runtime JS harus sama dengan Python
         run: node runtime/test_parity.mjs release
+      - name: Uji pemeriksa update APK
+        run: node runtime/test_update_check.mjs
+      - name: Uji router online/offline dan Worker
+        run: node runtime/test_online_router.mjs
       - name: Pasang dependency aplikasi
         working-directory: app
         run: npm install

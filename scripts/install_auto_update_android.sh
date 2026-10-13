@@ -29,11 +29,13 @@ public class AutoUpdatePlugin extends Plugin {
     public void start(PluginCall call) {
         String url = call.getString("url", "");
         if (url.isEmpty()) { call.reject("URL update kosong"); return; }
+        Uri updateUri = Uri.parse(url);
+        if (!"https".equalsIgnoreCase(updateUri.getScheme()) || !"github.com".equalsIgnoreCase(updateUri.getHost()) || !"/v1-byte/Miko-Ai/releases/download/latest/Miko-AI-main.apk".equals(updateUri.getPath())) { call.reject("URL update tidak tepercaya"); return; }
         try {
             DownloadManager manager = (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
             request.setMimeType("application/vnd.android.package-archive");
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             request.setTitle("Miko AI");
             request.setDescription("Pembaruan otomatis");
             request.setDestinationInExternalFilesDir(getContext(), Environment.DIRECTORY_DOWNLOADS, "miko-ai-update.apk");

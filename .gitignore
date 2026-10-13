@@ -9,3 +9,7 @@ app/www/ai/
 app/www/model/
 app/www/build.json
 .env
+.dev.vars
+.wrangler/
+*.jks
+*.keystore

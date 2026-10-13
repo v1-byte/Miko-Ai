@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "miko-ai-online-router",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-13",
+  "vars": {
+    "ALLOWED_ORIGINS": "capacitor://localhost,http://localhost,https://localhost",
+    "MIKO_MODEL_DEFAULT": "",
+    "MIKO_MODEL_WEB": "",
+    "MIKO_MODEL_SERVER": "",
+    "MIKO_MODEL_API": "",
+    "MIKO_MODEL_APK": "",
+    "MIKO_MODEL_SECURITY": "",
+    "MIKO_MODEL_CODING": ""
+  },
+  "ratelimits": [
+    {
+      "name": "MIKO_RATE_LIMITER",
+      "namespace_id": "738491205",
+      "simple": {
+        "limit": 10,
+        "period": 60
+      }
+    }
+  ]
+}

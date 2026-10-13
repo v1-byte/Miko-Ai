@@ -1,5 +1,7 @@
 // Asisten khusus CODING: gabungan aturan analisis (analyzer.js) + model bahasa buatan sendiri.
 import { analyzeFiles, formatReport } from "./analyzer.js";
+import { detectTopic } from "./topic-router.mjs";
+import { requestOnline } from "./online-client.mjs";
 
 export const chatPrompt = (message) => `<|user|>\n${message}\n<|assistant|>\n`;
 
@@ -66,12 +68,30 @@ const usable = (s) => {
   return true;
 };
 
-// message: pertanyaan; files: [{path, content}] opsional; mengalirkan potongan teks jawaban.
+// `online` bersifat opt-in. Hanya prompt teks dikirim; analisis berkas dan knowledge tetap lokal.
 export async function* reply(lm, message, files, opts = {}) {
   if (Array.isArray(files) && files.length && /analis|periksa|cek|error|scan/i.test(message)) {
     yield formatReport(analyzeFiles(files));
     return;
   }
+
+  const { online, onRoute, fetchImpl, ...generationOptions } = opts;
+  const topic = detectTopic(message);
+  if (online?.enabled && online?.endpoint) {
+    onRoute?.({ mode: "online-start", topic });
+    try {
+      const result = await requestOnline(online.endpoint, message, {
+        clientId: online.clientId,
+        fetchImpl,
+      });
+      onRoute?.({ mode: "online", topic: result.topic ?? topic, model: result.model });
+      yield result.answer;
+      return;
+    } catch (error) {
+      onRoute?.({ mode: "offline-fallback", topic, error: error?.message ?? "Permintaan online gagal." });
+    }
+  }
+
   if (/^(halo|hai|hi|hello|pagi|siang|sore|malam)\b/i.test(message.trim())) {
     yield fallback(message);
     return;
@@ -81,8 +101,9 @@ export async function* reply(lm, message, files, opts = {}) {
     yield known;
     return;
   }
+  if (!lm?.generate) throw new Error("Model offline belum siap dan router online tidak berhasil.");
   let answer = "";
-  for await (const part of lm.generate(chatPrompt(message), { maxNew: 220, temperature: 0.1, topK: 10, ...opts })) answer += part;
+  for await (const part of lm.generate(chatPrompt(message), { maxNew: 220, temperature: 0.1, topK: 10, ...generationOptions })) answer += part;
   const clean = normalize(answer);
   yield usable(clean) ? clean : fallback(message);
 }
