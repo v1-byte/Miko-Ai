@@ -1,0 +1,20 @@
+{
+  "project": "Miko-Ai Full Router Online",
+  "mode": "online_router_anti_boros",
+  "version": "2.2",
+  "quota_per_chat": "~3KB via Worker",
+  "interim_note": "Sebelum LoRA custom dilatih, Worker memakai model publik Qwen/Qwen2.5-Coder-7B-Instruct (lihat server/wrangler.jsonc). Ganti ke v1-byte/miko-*-lora setelah training.",
+  "adapters": {
+    "api": { "id": "v1-byte/miko-api-lora", "status": "pending_training", "interim_model": "Qwen/Qwen2.5-Coder-7B-Instruct", "dataset": "dataset_template/api/" },
+    "server": { "id": "v1-byte/miko-server-lora", "status": "pending_training", "interim_model": "Qwen/Qwen2.5-Coder-7B-Instruct", "dataset": "dataset_template/server/" },
+    "web": { "id": "v1-byte/miko-web-lora", "status": "pending_training", "interim_model": "Qwen/Qwen2.5-Coder-7B-Instruct", "dataset": "dataset_template/web/" },
+    "apk": { "id": "v1-byte/miko-apk-lora", "status": "pending_training", "interim_model": "Qwen/Qwen2.5-Coder-7B-Instruct", "dataset": "dataset_template/apk/" },
+    "security": { "id": "v1-byte/miko-security-lora", "status": "pending_training", "interim_model": "Qwen/Qwen2.5-Coder-7B-Instruct", "dataset": "dataset_template/security/" },
+    "coding": { "id": "v1-byte/miko-coding-lora", "status": "pending_training", "interim_model": "Qwen/Qwen2.5-Coder-7B-Instruct", "dataset": "dataset_template/coding/" }
+  },
+  "recommended_path": {
+    "client": "APK menu → Router online → URL Worker .../chat",
+    "server": "server/worker.mjs + wrangler secret put HF_TOKEN",
+    "guide": "docs/SETUP-ONLINE-FULL.md"
+  }
+}
