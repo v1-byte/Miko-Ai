@@ -138,7 +138,9 @@ def import_instructions(args) -> int:
                 skipped += 1
                 continue
             seen.add(signature)
-            out.write(json.dumps({"user": question, "assistant": answer}, ensure_ascii=False) + "\n")
+            # ASCII escaping keeps Unicode line separators inside a JSON string
+            # from being mistaken for physical JSONL line breaks by splitlines().
+            out.write(json.dumps({"user": question, "assistant": answer}, ensure_ascii=True) + "\n")
             count += 1
 
     info = SOURCES[source]
