@@ -1,0 +1,36 @@
+{
+  "project": "Miko-Ai Full Router Online",
+  "mode": "online_router_anti_boros",
+  "version": "2.0",
+  "quota_per_chat": "3KB",
+  "adapters": {
+    "api": {
+      "id": "v1-byte/miko-api-lora",
+      "shards": "10x100MB on HF, 20x50MB backup on GitHub",
+      "status": "online"
+    },
+    "server": {
+      "id": "v1-byte/miko-server-lora",
+      "shards": "same",
+      "status": "online"
+    },
+    "web": {
+      "id": "v1-byte/miko-web-lora",
+      "status": "online"
+    },
+    "apk": {
+      "id": "v1-byte/miko-apk-lora",
+      "status": "online"
+    },
+    "security": {
+      "id": "v1-byte/miko-security-lora",
+      "status": "online"
+    },
+    "coding": {
+      "id": "v1-byte/miko-coding-lora",
+      "status": "online"
+    }
+  },
+  "router": "js/router.js",
+  "api": "js/api.js"
+}
